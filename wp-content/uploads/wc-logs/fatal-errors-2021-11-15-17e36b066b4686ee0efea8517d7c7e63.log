@@ -1,0 +1,11 @@
+2021-11-15T04:11:06+00:00 CRITICAL Uncaught Error: Call to a member function get_name() on bool in /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php:176
+Stack trace:
+#0 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(193): create_product_variations(NULL, Array)
+#1 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(119): c55_loop_product_items(Array)
+#2 /Applications/MAMP/htdocs/wp-admin/includes/template.php(1694): my_setting_section_callback_function(Array)
+#3 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(53): do_settings_sections('sample-page')
+#4 /Applications/MAMP/htdocs/wp-includes/class-wp-hook.php(303): my_admin_page_contents('')
+#5 /Applications/MAMP/htdocs/wp-includes/class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+#6 /Applications/MAMP/htdocs/wp-includes/plugin.php(470): WP_Hook->do_action(Array)
+#7 /Appl in /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php on line 176
+
