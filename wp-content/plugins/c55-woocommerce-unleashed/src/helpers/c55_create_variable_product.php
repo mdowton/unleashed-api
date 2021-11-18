@@ -160,6 +160,7 @@ function create_product_variation($data)
             wp_set_post_terms($product_id, $term_name, $taxonomy, true);
         }
     }
+    // dd($product_attributes);
 
 
     update_post_meta($product_id, '_product_attributes', $product_attributes);
@@ -170,6 +171,7 @@ function create_product_variation($data)
 function create_product_variations($product_id, $variation_data)
 {
     // Get the Variable product object (parent)
+    $default = [];
     $product = wc_get_product($product_id);
 
     $variation_post = array(
@@ -188,7 +190,9 @@ function create_product_variations($product_id, $variation_data)
     $variation = new WC_Product_Variation($variation_id);
 
     // Iterating through the variations attributes
+    // dd($variation_data['attributes']);
     foreach ($variation_data['attributes'] as $attribute => $term_name) {
+
         $taxonomy = 'pa_' . $attribute; // The attribute taxonomy
 
         // If taxonomy doesn't exists we create it (Thanks to Carl F. Corneil)
@@ -220,6 +224,7 @@ function create_product_variations($product_id, $variation_data)
 
         // Set/save the attribute data in the product variation
         update_post_meta($variation_id, 'attribute_' . $taxonomy, $term_slug);
+        $default[$taxonomy] = $term_slug;
     }
 
     ## Set/save all other data
@@ -250,7 +255,6 @@ function create_product_variations($product_id, $variation_data)
     if (!empty($variation_data['image'])) {
         $variation->set_image_id($variation_data['image']);
     }
-
     $variation->set_weight(''); // weight (reseting)
 
     $variation->save(); // Save the data
@@ -289,4 +293,23 @@ function c55_upload_product_image($url, $filename)
     $attach_data = wp_generate_attachment_metadata($attach_id, $fullsizepath);
     wp_update_attachment_metadata($attach_id, $attach_data);
     return $attach_id;
+}
+
+function c55_updateDefaultAttributes($parent_id)
+{
+    $product = wc_get_product($parent_id);
+
+    if (!count($default_attributes = get_post_meta($product->get_id(), '_default_attributes'))) {
+        $new_defaults = array();
+        $product_attributes = $product->get_attributes();
+        if (count($product_attributes)) {
+            foreach ($product_attributes as $key => $attributes) {
+                $values = explode(',', $product->get_attribute($key));
+                if (isset($values[0]) && !isset($default_attributes[$key])) {
+                    $new_defaults[$key] = sanitize_key($values[0]);
+                }
+            }
+            update_post_meta($product->get_id(), '_default_attributes', $new_defaults);
+        }
+    }
 }

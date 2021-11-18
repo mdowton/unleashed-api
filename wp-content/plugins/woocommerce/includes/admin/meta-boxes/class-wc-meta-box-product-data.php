@@ -439,6 +439,7 @@ class WC_Meta_Box_Product_Data {
 	public static function save_variations( $post_id, $post ) {
 		// phpcs:disable WordPress.Security.NonceVerification.Missing
 		if ( isset( $_POST['variable_post_id'] ) ) {
+			
 			$parent = wc_get_product( $post_id );
 			$parent->set_default_attributes( self::prepare_set_attributes( $parent->get_attributes(), 'default_attribute_' ) );
 			$parent->save();

@@ -47,21 +47,22 @@ function my_admin_menu()
 
 function my_admin_page_contents()
 {
-    ?>
+?>
     <form method="POST" action="options.php">
-    <?php
+        <?php
         my_setting_markup();
         settings_fields('sample-page');
         do_settings_sections('sample-page');
         submit_button();
-    ?>
+        ?>
     </form>
-    <?php
+<?php
 }
 
 
-function register_my_plugin_scripts() {
-    wp_register_style('my-plugin', plugins_url('./c55-woocommerce-unleashed/assest/css/styles.css' ) );
+function register_my_plugin_scripts()
+{
+    wp_register_style('my-plugin', plugins_url('./c55-woocommerce-unleashed/assest/css/styles.css'));
     // wp_register_script('my-plugin', plugins_url('ddd/js/plugin.js' ) );
 }
 
@@ -75,18 +76,19 @@ function load_my_plugin_scripts($hook)
     wp_enqueue_style('my-plugin');
     wp_enqueue_script('my-plugin');
 }
-function my_settings_init() {
+function my_settings_init()
+{
 
     add_settings_section(
         'sample_page_setting_section',
-        __( 'Unleashed API Settings', 'my-textdomain' ),
+        __('Unleashed API Settings', 'my-textdomain'),
         'my_setting_section_callback_function',
         'sample-page'
     );
 
     add_settings_field(
         'unleashed_api_id',
-        __( 'API Credentials :', 'my-textdomain' ),
+        __('API Credentials :', 'my-textdomain'),
         'my_setting_markup',
         'sample-page',
         'sample_page_setting_section'
@@ -96,7 +98,8 @@ function my_settings_init() {
 }
 
 // MAIN LOOP
-function my_setting_section_callback_function() {
+function my_setting_section_callback_function()
+{
     // $dateToSetAdjustMents = gmdate("Y-m-d");
     echo '<p>Please add API Keys for Unleahsed account</p>';
     // dd('here');
@@ -123,7 +126,8 @@ function my_setting_section_callback_function() {
     }
 }
 
-function c55_loop_product_items($model) {
+function c55_loop_product_items($model)
+{
     // dd($model);
     foreach ($model['Items'] as $key => $item) {
         // dd($item['ImageUrl']);
@@ -135,11 +139,19 @@ function c55_loop_product_items($model) {
             //     strtolower($item['AttributeSet']['Attributes'][0]['Name']) => $item['AttributeSet']['Attributes'][0]['Value'],
             //     strtolower($item['AttributeSet']['Attributes'][1]['Name']) => $item['AttributeSet']['Attributes'][1]['Value'],
             // );
-            // dd($test);
+            // dd($item);
             $attributes = [];
+            $parentVariation = '';
             foreach ($item['AttributeSet']['Attributes'] as $key => $attr) {
-                $attributes[strtolower($attr['Name'])] = [$attr['Value']];
+                // dd($attr);
+                if ($attr['Name'] === 'Name') {
+                    // dd($attr);
+                    $parentVariation = strtolower($attr['Value']);
+                } else {
+                    $attributes[strtolower($attr['Name'])] = [$attr['Value']];
+                }
             }
+
             // Upload the product image
             $attachId = null;
             if (isset($item['ImageUrl'])) {
@@ -149,23 +161,26 @@ function c55_loop_product_items($model) {
                 // dd($fileName);
                 $attachId = c55_upload_product_image($url, $fileName . '.jpg');
             }
-            // Check if SKU alreday loaded
-            $isFound = c55_get_product_by_sku($item['AttributeSet']['SetName']);
+
+            // Check if SKU already loaded
+            $sku = str_replace(" ", "-", $parentVariation);
+            $isFound = c55_get_product_by_sku($sku);
+            // dd($isFound);
             // If not found create tthe variable product
             if ((int)$isFound === 0) {
                 // dd($attributes);
                 $productId = create_product_variation(array(
                     'author'        => '', // optional
-                    'title'         => $item['AttributeSet']['SetName'],
-                    'content'       => $item['AttributeSet']['SetName'],
-                    'excerpt'       => 'The product short description…',
+                    'title'         => $parentVariation,
+                    'content'       => $item['ProductDescription'],
+                    'excerpt'       => $item['ProductDescription'],
                     'regular_price' => '', // product regular price
                     'sale_price'    => '', // product sale price (optional)
                     'stock'         => '', // Set a minimal stock quantity
                     'set_manage_stock' => false,
                     'image_id'      => '', // optional
                     'gallery_ids'   => array(), // optional
-                    'sku'           => strtolower($item['AttributeSet']['SetName']), // optional
+                    'sku'           => strtolower($parentVariation), // optional
                     'tax_class'     => '', // optional
                     'weight'        => '', // optional
                     // For NEW attributes/values use NAMES (not slugs)
@@ -179,38 +194,48 @@ function c55_loop_product_items($model) {
             // The variation data
             $variationAtrr = [];
             foreach ($item['AttributeSet']['Attributes'] as $key => $attr) {
-                $variationAtrr[strtolower($attr['Name'])] = $attr['Value'];
+                // dd($attr);
+                if ($attr['Name'] !== 'Name') {
+                    $variationAtrr[strtolower($attr['Name'])] = $attr['Value'];
+                }
             }
             // dd('hehe');
             // dd($item['Guid']);
             // Call to get stock levels by GUID
             $stock_qty = c55_getStockOnHand($item['Guid']);
-            $variation_data =  array(
-                'attributes' => $variationAtrr,
-                'sku'           => $item['ProductCode'],
-                'regular_price' => $item['SellPriceTier1']['Value'],
-                'sale_price'    => '',
-                'stock_qty'     => $stock_qty,
-                'image' => $attachId
-            );
+            $isFoundVariation = c55_get_product_by_sku($item['ProductCode']);
 
-            // The function to be run
-            create_product_variations( $parent_id, $variation_data );
-
-            dd('done');
-        } else {
-            // They just a normal product no variation.
+            // dd($isFoundVariation);
+            if ((int)$isFoundVariation === 0) {
+                // dd($item);
+                $variation_data =  array(
+                    'attributes' => $variationAtrr,
+                    'sku'           => $item['ProductCode'],
+                    'regular_price' => $item['SellPriceTier1']['Value'],
+                    'sale_price'    => '',
+                    'stock_qty'     => $stock_qty,
+                    'image' => $attachId
+                );
+                if ((int)$isFound !== 0) {
+                    $parent_id = $isFound;
+                }
+                create_product_variations($parent_id, $variation_data);
+                c55_updateDefaultAttributes($parent_id);
+            }
+            // dd('done');
         }
     }
+    dd('done full loop');
 }
-function my_setting_markup() {
-    ?>
-    <label for="my-input"><?php _e( 'Unleashed API ID' ); ?></label>
-    <input type="text" id="unleashed_api_id" name="unleashed_api_id" value="<?php echo get_option( 'unleashed_api_id' ); ?>">
+function my_setting_markup()
+{
+?>
+    <label for="my-input"><?php _e('Unleashed API ID'); ?></label>
+    <input type="text" id="unleashed_api_id" name="unleashed_api_id" value="<?php echo get_option('unleashed_api_id'); ?>">
     <hr>
-    <label for="my-input"><?php _e( 'Unleashed API Key' ); ?></label>
-    <input type="text" id="unleashed_api_key" name="unleashed_api_key" value="<?php echo get_option( 'unleashed_api_key' ); ?>">
+    <label for="my-input"><?php _e('Unleashed API Key'); ?></label>
+    <input type="text" id="unleashed_api_key" name="unleashed_api_key" value="<?php echo get_option('unleashed_api_key'); ?>">
     <label for="my-input">Sync Unleased products <small>* wiil overwrite all products data</small></label>
     <button id="unleashed_sync" name="unleashed_sync">Sync unleashed to woo-commrce</button>
-    <?php
+<?php
 }
