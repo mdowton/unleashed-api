@@ -9,3 +9,54 @@ Stack trace:
 #6 /Applications/MAMP/htdocs/wp-includes/plugin.php(470): WP_Hook->do_action(Array)
 #7 /Appl in /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php on line 176
 
+2021-11-15T21:52:05+00:00 CRITICAL Uncaught Error: Call to a member function get_name() on bool in /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php:176
+Stack trace:
+#0 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(199): create_product_variations(NULL, Array)
+#1 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(121): c55_loop_product_items(Array)
+#2 /Applications/MAMP/htdocs/wp-admin/includes/template.php(1694): my_setting_section_callback_function(Array)
+#3 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(55): do_settings_sections('sample-page')
+#4 /Applications/MAMP/htdocs/wp-includes/class-wp-hook.php(303): my_admin_page_contents('')
+#5 /Applications/MAMP/htdocs/wp-includes/class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+#6 /Applications/MAMP/htdocs/wp-includes/plugin.php(470): WP_Hook->do_action(Array)
+#7 /Appl in /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php on line 176
+
+2021-11-15T22:28:47+00:00 CRITICAL Uncaught Error: Call to a member function get_name() on bool in /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php:176
+Stack trace:
+#0 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(199): create_product_variations(NULL, Array)
+#1 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(121): c55_loop_product_items(Array)
+#2 /Applications/MAMP/htdocs/wp-admin/includes/template.php(1694): my_setting_section_callback_function(Array)
+#3 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(55): do_settings_sections('sample-page')
+#4 /Applications/MAMP/htdocs/wp-includes/class-wp-hook.php(303): my_admin_page_contents('')
+#5 /Applications/MAMP/htdocs/wp-includes/class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+#6 /Applications/MAMP/htdocs/wp-includes/plugin.php(470): WP_Hook->do_action(Array)
+#7 /Appl in /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php on line 176
+
+2021-11-15T22:33:03+00:00 CRITICAL Uncaught Error: Call to a member function get_name() on bool in /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php:176
+Stack trace:
+#0 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(199): create_product_variations(NULL, Array)
+#1 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(121): c55_loop_product_items(Array)
+#2 /Applications/MAMP/htdocs/wp-admin/includes/template.php(1694): my_setting_section_callback_function(Array)
+#3 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(55): do_settings_sections('sample-page')
+#4 /Applications/MAMP/htdocs/wp-includes/class-wp-hook.php(303): my_admin_page_contents('')
+#5 /Applications/MAMP/htdocs/wp-includes/class-wp-hook.php(327): WP_Hook->apply_filters('', Array)
+#6 /Applications/MAMP/htdocs/wp-includes/plugin.php(470): WP_Hook->do_action(Array)
+#7 /Appl in /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php on line 176
+
+2021-11-15T22:36:38+00:00 CRITICAL Uncaught WC_Data_Exception: Invalid or duplicated SKU. in /Applications/MAMP/htdocs/wp-content/plugins/woocommerce/includes/abstracts/abstract-wc-data.php:856
+Stack trace:
+#0 /Applications/MAMP/htdocs/wp-content/plugins/woocommerce/includes/abstracts/abstract-wc-product.php(820): WC_Data->error('product_invalid...', 'Invalid or dupl...', 400, Array)
+#1 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php(229): WC_Product->set_sku('CUMGRO30G')
+#2 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(202): create_product_variations(1182, Array)
+#3 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(121): c55_loop_product_items(Array)
+#4 /Applications/MAMP/htdocs/wp-admin/includes/template.php(1694): my_setting_section_callback_function(Array)
+#5 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(55): do_set in /Applications/MAMP/htdocs/wp-content/plugins/woocommerce/includes/abstracts/abstract-wc-data.php on line 856
+
+2021-11-15T22:40:23+00:00 CRITICAL Uncaught WC_Data_Exception: Invalid or duplicated SKU. in /Applications/MAMP/htdocs/wp-content/plugins/woocommerce/includes/abstracts/abstract-wc-data.php:856
+Stack trace:
+#0 /Applications/MAMP/htdocs/wp-content/plugins/woocommerce/includes/abstracts/abstract-wc-product.php(820): WC_Data->error('product_invalid...', 'Invalid or dupl...', 400, Array)
+#1 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/src/helpers/c55_create_variable_product.php(229): WC_Product->set_sku('CUMGRO30G')
+#2 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(206): create_product_variations(1182, Array)
+#3 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(121): c55_loop_product_items(Array)
+#4 /Applications/MAMP/htdocs/wp-admin/includes/template.php(1694): my_setting_section_callback_function(Array)
+#5 /Applications/MAMP/htdocs/wp-content/plugins/c55-woocommerce-unleashed/c55-woocommerce-unleashed.php(55): do_set in /Applications/MAMP/htdocs/wp-content/plugins/woocommerce/includes/abstracts/abstract-wc-data.php on line 856
+

@@ -23,6 +23,8 @@ include_once('src/helpers/c55_create_variable_product.php');
 include_once('src/all-products/c55-all-products.php');
 include_once('src/stock-adjustments/c55-stock-adjustments.php');
 include_once('src/woocommerce-products/c55-woocommerce-products.php');
+include_once('src/woocommerce-products/woocommerce_product_hooks.php');
+
 
 add_action('admin_menu', 'my_admin_menu');
 add_action('admin_enqueue_scripts', 'register_my_plugin_scripts');
@@ -169,7 +171,7 @@ function c55_loop_product_items($model)
             // If not found create tthe variable product
             if ((int)$isFound === 0) {
                 // dd($attributes);
-                $productId = create_product_variation(array(
+                $productId = create_product_variable(array(
                     'author'        => '', // optional
                     'title'         => $parentVariation,
                     'content'       => $item['ProductDescription'],
@@ -180,7 +182,7 @@ function c55_loop_product_items($model)
                     'set_manage_stock' => false,
                     'image_id'      => '', // optional
                     'gallery_ids'   => array(), // optional
-                    'sku'           => strtolower($parentVariation), // optional
+                    'sku'           => $sku, // optional
                     'tax_class'     => '', // optional
                     'weight'        => '', // optional
                     // For NEW attributes/values use NAMES (not slugs)
@@ -189,6 +191,9 @@ function c55_loop_product_items($model)
                 // dd($productId);
                 // create the variations
                 $parent_id = $productId; // Or get the variable product id dynamically
+            } else {
+                echo 'Varibale product exists update <br/>';
+                c55_updateProductVariable($isFound, $item);
             }
             // Else add tha variations.
             // The variation data
@@ -207,7 +212,7 @@ function c55_loop_product_items($model)
 
             // dd($isFoundVariation);
             if ((int)$isFoundVariation === 0) {
-                // dd($item);
+                echo 'Creating a variant <br/>';
                 $variation_data =  array(
                     'attributes' => $variationAtrr,
                     'sku'           => $item['ProductCode'],
@@ -219,13 +224,17 @@ function c55_loop_product_items($model)
                 if ((int)$isFound !== 0) {
                     $parent_id = $isFound;
                 }
+                // var_dump($variation_data);
                 create_product_variations($parent_id, $variation_data);
                 c55_updateDefaultAttributes($parent_id);
+            } else {
+                echo 'variant exist update <br/>';
             }
             // dd('done');
         }
+        // echo 'Creating variable product ...' . $item['ProductCode'];
     }
-    dd('done full loop');
+    echo 'Uploaded complete ....';
 }
 function my_setting_markup()
 {

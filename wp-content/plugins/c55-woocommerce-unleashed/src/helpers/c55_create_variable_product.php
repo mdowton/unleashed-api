@@ -68,9 +68,10 @@ function get_attribute_id_from_name($name)
  *
  * @since 3.0.0
  * @param array $data | The data to insert in the product.
+ * Create a variable product
  */
 
-function create_product_variation($data)
+function create_product_variable($data)
 {
     if (!function_exists('save_product_attribute_from_name')) return;
 
@@ -129,6 +130,7 @@ function create_product_variation($data)
     ## ---------------------- VARIATION ATTRIBUTES ---------------------- ##
 
     $product_attributes = array();
+    // dd($data['attributes']);
     foreach ($data['attributes'] as $key => $terms) {
         $taxonomy = wc_attribute_taxonomy_name($key); // The taxonomy slug
         $attr_label = ucfirst($key); // attribute label name
@@ -137,32 +139,37 @@ function create_product_variation($data)
         // NEW Attributes: Register and save them
         if (!taxonomy_exists($taxonomy))
             save_product_attribute_from_name($attr_name, $attr_label);
+        // var_dump($key);
+        // var_dump($terms);
+        if (isset($terms[0]) && $terms[0] !== null) {
+            $product_attributes[$taxonomy] = array(
+                'name'         => $taxonomy,
+                'value'        => '',
+                'position'     => '',
+                'is_visible'   => 0,
+                'is_variation' => 1,
+                'is_taxonomy'  => 1
+            );
+        }
 
-        $product_attributes[$taxonomy] = array(
-            'name'         => $taxonomy,
-            'value'        => '',
-            'position'     => '',
-            'is_visible'   => 0,
-            'is_variation' => 1,
-            'is_taxonomy'  => 1
-        );
+        // var_dump($terms);
+
 
         foreach ($terms as $value) {
+            // var_dump($value);
+            if (isset($value) && $value !== null) {
+                $term_name = ucfirst($value);
+                $term_slug = sanitize_title($value);
 
-            $term_name = ucfirst($value);
-            $term_slug = sanitize_title($value);
+                // Check if the Term name exist and if not we create it.
+                if (!term_exists($value, $taxonomy))
+                    wp_insert_term($term_name, $taxonomy, array('slug' => $term_slug)); // Create the term
 
-            // Check if the Term name exist and if not we create it.
-            if (!term_exists($value, $taxonomy))
-                wp_insert_term($term_name, $taxonomy, array('slug' => $term_slug)); // Create the term
-
-            // Set attribute values
-            wp_set_post_terms($product_id, $term_name, $taxonomy, true);
+                // Set attribute values
+                wp_set_post_terms($product_id, $term_name, $taxonomy, true);
+            }
         }
     }
-    // dd($product_attributes);
-
-
     update_post_meta($product_id, '_product_attributes', $product_attributes);
     $product->save(); // Save the data
     return $product_id;
@@ -208,23 +215,25 @@ function create_product_variations($product_id, $variation_data)
                 ),
             );
         }
+        // dd($term_name);
+        if (isset($term_name) && $term_name !== null) {
+            // Check if the Term name exist and if not we create it.
+            if (!term_exists($term_name, $taxonomy))
+                wp_insert_term($term_name, $taxonomy); // Create the term
 
-        // Check if the Term name exist and if not we create it.
-        if (!term_exists($term_name, $taxonomy))
-            wp_insert_term($term_name, $taxonomy); // Create the term
+            $term_slug = get_term_by('name', $term_name, $taxonomy)->slug; // Get the term slug
 
-        $term_slug = get_term_by('name', $term_name, $taxonomy)->slug; // Get the term slug
+            // Get the post Terms names from the parent variable product.
+            $post_term_names =  wp_get_post_terms($product_id, $taxonomy, array('fields' => 'names'));
 
-        // Get the post Terms names from the parent variable product.
-        $post_term_names =  wp_get_post_terms($product_id, $taxonomy, array('fields' => 'names'));
+            // Check if the post term exist and if not we set it in the parent variable product.
+            if (!in_array($term_name, $post_term_names))
+                wp_set_post_terms($product_id, $term_name, $taxonomy, true);
 
-        // Check if the post term exist and if not we set it in the parent variable product.
-        if (!in_array($term_name, $post_term_names))
-            wp_set_post_terms($product_id, $term_name, $taxonomy, true);
-
-        // Set/save the attribute data in the product variation
-        update_post_meta($variation_id, 'attribute_' . $taxonomy, $term_slug);
-        $default[$taxonomy] = $term_slug;
+            // Set/save the attribute data in the product variation
+            update_post_meta($variation_id, 'attribute_' . $taxonomy, $term_slug);
+            $default[$taxonomy] = $term_slug;
+        }
     }
 
     ## Set/save all other data
@@ -258,7 +267,7 @@ function create_product_variations($product_id, $variation_data)
     $variation->set_weight(''); // weight (reseting)
 
     $variation->save(); // Save the data
-
+    
     return $variation_id;
 }
 
