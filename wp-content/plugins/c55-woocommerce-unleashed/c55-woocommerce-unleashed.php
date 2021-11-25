@@ -30,8 +30,15 @@ add_action('admin_menu', 'my_admin_menu');
 add_action('admin_enqueue_scripts', 'register_my_plugin_scripts');
 add_action('admin_enqueue_scripts', 'load_my_plugin_scripts');
 add_action('admin_init', 'my_settings_init');
+// Hook for CRON
+add_action( 'unleashed_cron_hook', 'unleashed_cron_exec' );
 
 const PRODUCT_GROUP = 'retail';
+
+function unleashed_cron_exec() {
+    // Calls the main loop to execute
+    my_setting_section_callback_function();
+}
 
 function my_admin_menu()
 {
@@ -52,7 +59,7 @@ function my_admin_page_contents()
 ?>
     <form method="POST" action="options.php">
         <?php
-        my_setting_markup();
+        // my_setting_markup();
         settings_fields('sample-page');
         do_settings_sections('sample-page');
         submit_button();
@@ -103,10 +110,10 @@ function my_settings_init()
 function my_setting_section_callback_function()
 {
     // $dateToSetAdjustMents = gmdate("Y-m-d");
-    echo '<p>Please add API Keys for Unleahsed account</p>';
+    // echo '<p>Please add API Keys for Unleahsed account</p>';
     // dd('here');
     // c55_getStockAdjustMents();
-    $model = c55_syncAllProducts();
+    // $model = c55_syncAllProducts();
 
     // dd($model);
     if ($model) {
@@ -239,12 +246,18 @@ function c55_loop_product_items($model)
 function my_setting_markup()
 {
 ?>
-    <label for="my-input"><?php _e('Unleashed API ID'); ?></label>
-    <input type="text" id="unleashed_api_id" name="unleashed_api_id" value="<?php echo get_option('unleashed_api_id'); ?>">
-    <hr>
-    <label for="my-input"><?php _e('Unleashed API Key'); ?></label>
-    <input type="text" id="unleashed_api_key" name="unleashed_api_key" value="<?php echo get_option('unleashed_api_key'); ?>">
-    <label for="my-input">Sync Unleased products <small>* wiil overwrite all products data</small></label>
-    <button id="unleashed_sync" name="unleashed_sync">Sync unleashed to woo-commrce</button>
+    <section id="section-form">
+        <div style="padding: 0 20px 20px 20px;">
+            <label for="my-input"><?php _e('Unleashed API ID'); ?>:</label>
+            <input style="min-width: 600px;" type="text" id="unleashed_api_id" name="unleashed_api_id" value="<?php echo get_option('unleashed_api_id'); ?>">
+        </div>
+        <div style="padding: 0 20px 20px 20px;">
+            <label for="my-input"><?php _e('Unleashed API Key'); ?>:</label>
+            <input style="min-width: 600px;" type="text" id="unleashed_api_key" name="unleashed_api_key" value="<?php echo get_option('unleashed_api_key'); ?>">
+        </div>
+        <div style="padding: 0 20px 20px 20px;">
+            <button id="unleashed_sync" name="unleashed_sync" class="button button-primary">Sync unleashed to woo-comm</button>
+        </div>
+    </section>
 <?php
 }

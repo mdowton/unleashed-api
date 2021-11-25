@@ -3,3 +3,11 @@
     padding: 20px;
     margin-top: 20px;
 }
+
+#section-form {
+    width: 100%;
+    padding: 0 20px 0 20px;
+}
+#unleashed_api_id {
+    min-width: 600px;
+}
