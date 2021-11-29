@@ -109,13 +109,9 @@ function my_settings_init()
 // MAIN LOOP
 function my_setting_section_callback_function()
 {
-    // $dateToSetAdjustMents = gmdate("Y-m-d");
-    // echo '<p>Please add API Keys for Unleahsed account</p>';
-    // dd('here');
-    // c55_getStockAdjustMents();
-    // $model = c55_syncAllProducts();
+    
+    $model = c55_syncAllProducts();
 
-    // dd($model);
     if ($model) {
         if ($model['Pagination'] && (int) $model['Pagination']['NumberOfPages'] > 1) {
             foreach ($model['Pagination'] as $page) {
@@ -211,7 +207,6 @@ function c55_loop_product_items($model)
                     $variationAtrr[strtolower($attr['Name'])] = $attr['Value'];
                 }
             }
-            // dd('hehe');
             // dd($item['Guid']);
             // Call to get stock levels by GUID
             $stock_qty = c55_getStockOnHand($item['Guid']);

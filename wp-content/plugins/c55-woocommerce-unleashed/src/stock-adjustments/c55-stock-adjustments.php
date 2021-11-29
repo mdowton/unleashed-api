@@ -1,5 +1,5 @@
 <?php
-
+// Deperected not used
 if (!function_exists('c55_getStockAdjustMents')) {
     function c55_getStockAdjustMents($date = null)
     {
