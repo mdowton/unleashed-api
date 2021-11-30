@@ -33,6 +33,8 @@ add_action('admin_init', 'my_settings_init');
 // Hook for CRON
 add_action( 'unleashed_cron_hook', 'unleashed_cron_exec' );
 
+
+
 const PRODUCT_GROUP = 'retail';
 
 function unleashed_cron_exec() {
@@ -133,24 +135,13 @@ function my_setting_section_callback_function()
 
 function c55_loop_product_items($model)
 {
-    // dd($model);
     foreach ($model['Items'] as $key => $item) {
-        // dd($item['ImageUrl']);
         // If they are variation product ....
         if ($item && !empty($item['AttributeSet'])) {
-            // dd($item);
-            // dd($item['AttributeSet']['Attributes']);
-            // $test = array(
-            //     strtolower($item['AttributeSet']['Attributes'][0]['Name']) => $item['AttributeSet']['Attributes'][0]['Value'],
-            //     strtolower($item['AttributeSet']['Attributes'][1]['Name']) => $item['AttributeSet']['Attributes'][1]['Value'],
-            // );
-            // dd($item);
             $attributes = [];
             $parentVariation = '';
             foreach ($item['AttributeSet']['Attributes'] as $key => $attr) {
-                // dd($attr);
                 if ($attr['Name'] === 'Name') {
-                    // dd($attr);
                     $parentVariation = strtolower($attr['Value']);
                 } else {
                     $attributes[strtolower($attr['Name'])] = [$attr['Value']];
@@ -160,20 +151,16 @@ function c55_loop_product_items($model)
             // Upload the product image
             $attachId = null;
             if (isset($item['ImageUrl'])) {
-                $url = $item['ImageUrl'];
-                // dd($url);
-                $fileName = preg_replace("/[\s_]/", "-", $item['ProductDescription']);
-                // dd($fileName);
-                $attachId = c55_upload_product_image($url, $fileName . '.jpg');
+                // $fileName = preg_replace("/[\s_]/", "-", $item['ProductDescription']);
+                // $attachId = c55_upload_product_image($url, $fileName . '.jpg');
+                $attachId = $item['ImageUrl'];
             }
 
             // Check if SKU already loaded
             $sku = str_replace(" ", "-", $parentVariation);
             $isFound = c55_get_product_by_sku($sku);
-            // dd($isFound);
             // If not found create tthe variable product
             if ((int)$isFound === 0) {
-                // dd($attributes);
                 $productId = create_product_variable(array(
                     'author'        => '', // optional
                     'title'         => $parentVariation,
@@ -191,7 +178,6 @@ function c55_loop_product_items($model)
                     // For NEW attributes/values use NAMES (not slugs)
                     'attributes'    => $attributes
                 ));
-                // dd($productId);
                 // create the variations
                 $parent_id = $productId; // Or get the variable product id dynamically
             } else {
@@ -202,17 +188,14 @@ function c55_loop_product_items($model)
             // The variation data
             $variationAtrr = [];
             foreach ($item['AttributeSet']['Attributes'] as $key => $attr) {
-                // dd($attr);
                 if ($attr['Name'] !== 'Name') {
                     $variationAtrr[strtolower($attr['Name'])] = $attr['Value'];
                 }
             }
-            // dd($item['Guid']);
             // Call to get stock levels by GUID
             $stock_qty = c55_getStockOnHand($item['Guid']);
             $isFoundVariation = c55_get_product_by_sku($item['ProductCode']);
 
-            // dd($isFoundVariation);
             if ((int)$isFoundVariation === 0) {
                 echo 'Creating a variant <br/>';
                 $variation_data =  array(
@@ -226,15 +209,12 @@ function c55_loop_product_items($model)
                 if ((int)$isFound !== 0) {
                     $parent_id = $isFound;
                 }
-                // var_dump($variation_data);
                 create_product_variations($parent_id, $variation_data);
                 c55_updateDefaultAttributes($parent_id);
             } else {
                 echo 'variant exist update <br/>';
             }
-            // dd('done');
         }
-        // echo 'Creating variable product ...' . $item['ProductCode'];
     }
     echo 'Uploaded complete ....';
 }

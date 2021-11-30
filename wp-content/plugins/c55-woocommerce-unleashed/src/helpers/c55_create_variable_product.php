@@ -262,12 +262,14 @@ function create_product_variations($product_id, $variation_data)
 
     // Product Image
     if (!empty($variation_data['image'])) {
-        $variation->set_image_id($variation_data['image']);
+        $image_meta_url = '_knawatfibu_url';
+        update_post_meta($variation_id, $image_meta_url, $variation_data['image']);
     }
+
     $variation->set_weight(''); // weight (reseting)
 
     $variation->save(); // Save the data
-    
+
     return $variation_id;
 }
 
